@@ -61,6 +61,43 @@ fun Week(start: Int, end: Int, weekday: Int, selected: Int, onValueChange: (Int)
     }
 }
 
+/**
+ * 处理跨月的情况
+ * 例如：当月第一天是周五，那么第一行就会显示周五、周六、周日，第二行从周一开始显示1号，直到7号；当月最后一天是周二，那么最后一行就会显示28号、29号、30号，下一行从周三开始显示1号，直到周日。
+ * @param start 当前周的第一天
+ * @param end 当前周的最后一天
+ * @param selected 当前选中的日期
+ * @param onValueChange 日期变化时的回调函数
+ */
+@Composable
+fun Week(start: Int, end: Int, selected: Int, onValueChange: (Int) -> Unit) {
+    Row(modifier = Modifier.fillMaxWidth()) {
+        if (start < end){
+            for (day in start..end) {
+                Day(day, selected, Modifier.weight(1f), onValueChange)
+            }
+        } else{
+            var e = end
+            var i = 0
+            while (e >= 1) {
+                e--
+                i++
+            }
+            var n = 7 - i
+            var x = n
+            var s = start
+            while (x != 0) {
+                Day(s, selected, Modifier.weight(1f), onValueChange)
+                x--
+                s++
+            }
+            for (day in 1..end) {
+                Day(day, selected, Modifier.weight(1f), onValueChange)
+            }
+        }
+    }
+}
+
 @Composable
 fun Day(day: Int, selected: Int, modifier: Modifier = Modifier, onValueChange: (Int) -> Unit) {
     val isSelected = day == selected
